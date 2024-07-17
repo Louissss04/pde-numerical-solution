@@ -23,7 +23,7 @@
 
 **语法：**
 ```matlab
-u = FDM3points(a, delta_t, delta_x, x_end, t_end, scheme, fai, g)
+u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, scheme, phi, g)
 ```
 
 
