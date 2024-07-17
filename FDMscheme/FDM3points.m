@@ -1,4 +1,4 @@
-function u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, scheme, fai, g)
+function u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, scheme, phi, g)
     % FDM3points - Solves the PDE u_t + a u_x = 0 (a>0) using different
     %              3-points finite difference schemes
     %
@@ -24,7 +24,7 @@ function u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, sch
     %   Written by Qi Sun, July 2024.
 
     % Check if fai(t_start) equals g(x_start)
-    if fai(t_start) ~= g(x_start)
+    if phi(t_start) ~= g(x_start)
         error('Boundary condition fai(t_start) must equal initial condition g(x_start).');
     end
     
@@ -69,12 +69,19 @@ function u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, sch
         end
 
         % Apply boundary condition at x=x_start
-        u_next(1) = fai(t(n+1));
+        u_next(1) = phi(t(n+1));
 
         % Apply upwind scheme for boundary at x=x_end
         u_next(end) = u(n, end) - (nu * (u(n, end) - u(n, end-1)));
 
         % Update the solution
         u(n+1, :) = u_next;
+  
+        % % Dynamicly plot 
+        % clf
+        % plot(x,u(n,:))
+        % pause(0.1);
     end
+
+    
 end

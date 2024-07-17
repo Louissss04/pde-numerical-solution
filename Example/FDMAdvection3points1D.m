@@ -19,11 +19,12 @@ t_start = 0.0;
 t_end = 1.0;
 
 % Boundary and initial conditions
-fai = @(t) sin(2 * pi * t); % Boundary condition at x=0
-g = @(x) 0;   % Initial condition at t=0
+fai = @(t) 0; % Boundary condition at x=0
+%g = @(x) 1/2 + sign(x-1/2)/2;   % Initial condition at t=0
 
+g = @(x) sin(2*pi*x);
 % Scheme to use
-scheme = 'LW'; % Choose from 'LF', 'LW', 'CD', 'BW', 'FW'
+scheme = 'FW'; % Choose from 'LF', 'LW', 'CD', 'BW', 'FW'
 
 % Solve the PDE
 u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, scheme, fai, g);
