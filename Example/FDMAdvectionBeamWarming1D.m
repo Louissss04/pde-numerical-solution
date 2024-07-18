@@ -19,11 +19,11 @@ t_start = 0.0;
 t_end = 1.0;
 
 % Boundary and initial conditions
-fai = @(t) sin(2 * pi * t); % Boundary condition at x=0
+phi = @(t) sin(2 * pi * t); % Boundary condition at x=0
 g = @(x) 0;   % Initial condition at t=0
 
 % Solve the PDE
-u = BeamWarmingscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, fai, g);
+u = BeamWarmingscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, g);
 
 % Plot the result
 x = linspace(x_start, x_end, floor((x_end - x_start) / delta_x) + 1);

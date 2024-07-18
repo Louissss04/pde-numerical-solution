@@ -1,8 +1,8 @@
-function u = LeapFrog(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, g)
-    % LeapFrog - Solves the PDE u_t + a u_x = 0 using the Leap-Frog method
+function u = ImplicitCentralDifference(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, g)
+    % ImplicitCentralDifference - Solves the PDE u_t + a u_x = 0 using the implicit central difference method
     %
     % Syntax:
-    %   u = LeapFrog(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, g)
+    %   u = ImplicitCentralDifference(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, g)
     %
     % Inputs:
     %   a         - Advection speed
@@ -21,7 +21,7 @@ function u = LeapFrog(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, 
     %   Written by Qi Sun, July 2024.
 
     % Check if fai(t_start) equals g(x_start)
-    if phi(t_start) - g(x_start) >= 1e-8
+    if phi(t_start) ~= g(x_start)
         error('Boundary condition fai(t_start) must equal initial condition g(x_start).');
     end
 
@@ -39,19 +39,29 @@ function u = LeapFrog(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, 
     u = zeros(num_t_points, num_x_points);
     u(1, :) = g(x);
 
-    % Startup step: Use Backward/Upwind method to calculate u(2,:)
-    for i = 2:num_x_points-1
-        u(2, i) = u(1, i) - nu * (u(1, i) - u(1, i-1));
-    end
-    u(2, 1) = phi(t(2));  % Apply boundary condition at x=0
-    u(2, end) = u(1, end) - nu * (u(1, end) - u(1, end-1));  % Apply boundary condition at x=x_end
+    % Coefficient matrix for implicit central difference
+    % In fact, first line is boundary condition, last line is upwind scheme
 
-    % Time evolution: Use Leap-Frog method
-    for n = 2:num_t_points-1
-        for i = 2:num_x_points-1
-            u(n+1, i) = u(n-1, i) - nu * (u(n, i+1) - u(n, i-1));
-        end
-        u(n+1, 1) = phi(t(n+1));  % Apply boundary condition at x=0
-        u(n+1, end) = u(n, end) - nu * (u(n, end) - u(n, end-1));  % Apply BW method at x=x_end
+    A = diag(ones(num_x_points, 1));
+    for j = 2:num_x_points-1
+        A(j, j-1) = -nu / 2;
+        A(j, j) = 1;
+        A(j, j+1) = nu / 2;
+    end
+
+    % Time evolution
+    for n = 1:num_t_points-1
+        % Right-hand side for implicit method
+        b = u(n, 2:end-1)';
+        b_end = u(n, end) - nu * (u(n, end) - u(n, end-1));
+
+        % Apply boundary condition at x=0
+        b = [phi(t(n+1)); b ; b_end];
+
+        % Solve the linear system
+        u_next = A \ b;
+
+        % Update the solution
+        u(n+1, :) = u_next';
     end
 end

@@ -2,7 +2,7 @@ function u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, sch
     % FDM3points - Solves the PDE u_t + a u_x = 0 (a>0) using different
     %              3-points finite difference schemes
     %
-    % Syntax: u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, scheme, fai, g)
+    % Syntax: u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, scheme, phi, g)
     %
     % Inputs:
     %   a         - Advection speed
@@ -14,7 +14,7 @@ function u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, sch
     %   t_end     - End point of the time domain
     %   scheme    - Scheme to use: 'LF' (Lax-Friedrichs), 'LW' (Lax-Wendroff), 
     %               'CD' (Central Difference), 'BW' (Backward/Upwind), 'FW' (Forward/Downwind)
-    %   fai       - Function handle for boundary condition u(t,0)
+    %   phi       - Function handle for boundary condition u(t,0)
     %   g         - Function handle for initial condition u(0,x)
     %
     % Outputs:
@@ -24,7 +24,7 @@ function u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, sch
     %   Written by Qi Sun, July 2024.
 
     % Check if fai(t_start) equals g(x_start)
-    if phi(t_start) ~= g(x_start)
+    if phi(t_start) - g(x_start) >= 1e-8
         error('Boundary condition fai(t_start) must equal initial condition g(x_start).');
     end
     

@@ -19,15 +19,11 @@ t_start = 0.0;
 t_end = 1.0;
 
 % Boundary and initial conditions
-phi = @(t) 0; % Boundary condition at x=0
-%g = @(x) 1/2 + sign(x-1/2)/2;   % Initial condition at t=0
-g = @(x) sin(2 * pi * x);
-
-% Scheme to use
-scheme = 'LF'; % Choose from 'LF', 'LW', 'CD', 'BW', 'FW'
+fai = @(t) sin(2 * pi * t); % Boundary condition at x=0
+g = @(x) 0;   % Initial condition at t=0
 
 % Solve the PDE
-u = FDM3points(a, delta_t, delta_x, x_start, x_end, t_start, t_end, scheme, phi, g);
+u = ImplicitCentralDifference(a, delta_t, delta_x, x_start, x_end, t_start, t_end, fai, g);
 
 % Plot the result
 x = linspace(x_start, x_end, floor((x_end - x_start) / delta_x) + 1);
@@ -43,4 +39,4 @@ surf(X, T, u);
 xlabel('x');
 ylabel('t');
 zlabel('u(x,t)');
-title(['Solution of the advection equation using the ', scheme, ' method']);
+title('Solution of the advection equation using the implicit central difference method');

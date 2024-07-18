@@ -1,8 +1,8 @@
-function u = Boxscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, fai, g)
+function u = Boxscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, g)
     % Boxscheme - Solves the PDE u_t + a u_x = 0 using the Box scheme method
     %
     % Syntax:
-    %   u = Boxscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, fai, g)
+    %   u = Boxscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, g)
     %
     % Inputs:
     %   a         - Advection speed
@@ -21,7 +21,7 @@ function u = Boxscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, fai,
     %   Written by Qi Sun, July 2024.
 
     % Check if fai(t_start) equals g(x_start)
-    if fai(t_start) ~= g(x_start)
+    if phi(t_start) - g(x_start) >= 1e-8
         error('Boundary condition fai(t_start) must equal initial condition g(x_start).');
     end
 
@@ -45,7 +45,7 @@ function u = Boxscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, fai,
         u_next = zeros(1, num_x_points);
 
         % Apply boundary condition at x=0
-        u_next(1) = fai(t(n+1));
+        u_next(1) = phi(t(n+1));
 
         % Apply the Box scheme for internal points
         for j = 2:num_x_points

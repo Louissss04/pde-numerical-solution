@@ -1,8 +1,8 @@
-function u = BeamWarmingscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, fai, g)
+function u = BeamWarmingscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, g)
     % BeamWarmingscheme - Solves the PDE u_t + a u_x = 0 using the Beam-Warming method
     %
     % Syntax:
-    %   u = BeamWarmingscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, fai, g)
+    %   u = BeamWarmingscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_end, phi, g)
     %
     % Inputs:
     %   a         - Advection speed
@@ -21,7 +21,7 @@ function u = BeamWarmingscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_e
     %   Written by Qi Sun, July 2024.
 
     % Check if fai(t_start) equals g(x_start)
-    if fai(t_start) ~= g(x_start)
+    if phi(t_start) - g(x_start) >= 1e-8
         error('Boundary condition fai(t_start) must equal initial condition g(x_start).');
     end
 
@@ -45,7 +45,7 @@ function u = BeamWarmingscheme(a, delta_t, delta_x, x_start, x_end, t_start, t_e
             u(n+1, j) = u(n, j) - (nu / 2) * (3 * u(n, j) - 4 * u(n, j-1) + u(n, j-2)) + ...
                         (nu^2 / 2) * (u(n, j) - 2 * u(n, j-1) + u(n, j-2));
         end
-        u(n+1, 1) = fai(t(n+1));  % Apply boundary condition at x=0
+        u(n+1, 1) = phi(t(n+1));  % Apply boundary condition at x=0
         u(n+1, 2) = u(n, 2) - nu * (u(n, 2) - u(n, 1));  % Apply upwind scheme at the first internal point
     end
 end
